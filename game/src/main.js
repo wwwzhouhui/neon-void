@@ -281,6 +281,13 @@ function update(dt) {
     }
     game.prevFiring = firingNow;
 
+    // Safety net: any path that kills the player must end the run, even if
+    // the damage did not flow through hurtPlayer (e.g. a test hook).
+    if (!player.state.alive) {
+      endGame();
+      return;
+    }
+
     enemyManager.update(dt, player.state.position, player.state, now);
     checkWaveCleared();
     if (game.restTimer > 0) {

@@ -25,7 +25,7 @@ export function buildArena(scene, rng) {
   const grid = new THREE.GridHelper(half * 2, 44, PALETTE.gridCyan, 0x14204a);
   grid.position.y = 0.02;
   grid.material.transparent = true;
-  grid.material.opacity = 0.5;
+  grid.material.opacity = 0.75;
   group.add(grid);
 
   // Perimeter walls with a magenta rim on top.
