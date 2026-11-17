@@ -12,7 +12,7 @@ NEON VOID is a neon arena wave-survival FPS that runs in a desktop browser from 
 node serve.ts
 ```
 
-Then open http://localhost:8080 . The local server supplies ES module MIME types; no internet connection or build step is needed during play.
+Then open http://localhost:8080. The local server supplies ES module MIME types; no internet connection or build step is needed during play.
 
 ---
 
@@ -31,7 +31,7 @@ node --experimental-loader ./tests/three-loader.mjs tests/gameplay.mjs
 MAKEFUN_OUTPUT_DIR=out node main.ts
 ```
 
-See [competition review](docs/COMPETITION-REVIEW.md) for changes, validation limits and remaining submission steps. The screenshots currently show v1; refresh them from real browser renders before entering this revision.
+See [competition review](docs/COMPETITION-REVIEW.md) for changes, validation limits and remaining submission steps. Screenshots were refreshed in Chromium by the successful [browser validation run](https://github.com/wwwzhouhui/neon-void/actions/runs/44032587707).
 
 ## Reproducible screenshots and build evidence
 

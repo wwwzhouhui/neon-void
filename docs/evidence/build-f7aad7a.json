@@ -1,0 +1,175 @@
+{
+  "schema": "neon-void/build-evidence/1",
+  "commit": "f7aad7a37890429e36b72f8e55261c98f61ae68d",
+  "node": "v24.22.2",
+  "files": [
+    {
+      "path": "game/index.html",
+      "bytes": 11277,
+      "sha256": "3dde07419469984903e3294bef1c0aa76ec4c985ba3a98cbd3ca4c1651e0bc4d"
+    },
+    {
+      "path": "game/src/audio.js",
+      "bytes": 4394,
+      "sha256": "dd01b0833157cfe1bc0bed2edc226f2f115818411f506cf892c38632ab5635b1"
+    },
+    {
+      "path": "game/src/chain.js",
+      "bytes": 591,
+      "sha256": "2ffbc8e6c7468f3bcb9455890b3cb1f2da269d098ca09e4c214ad65ef30e06d0"
+    },
+    {
+      "path": "game/src/config.js",
+      "bytes": 3112,
+      "sha256": "b99c792c85b7bff0d7d537fb2148f2a08a03a8592d7cbd38ae687b844b313b4a"
+    },
+    {
+      "path": "game/src/enemies.js",
+      "bytes": 11965,
+      "sha256": "3c32843b9513b8324a745bfb10cdee75aab860013748e83eb538ae810ed6b12a"
+    },
+    {
+      "path": "game/src/fx.js",
+      "bytes": 3564,
+      "sha256": "9ba596494e0b8203ad75732a1f1b8cc0484e777e3aea54d773a6aa51f0319a29"
+    },
+    {
+      "path": "game/src/hud.js",
+      "bytes": 5665,
+      "sha256": "b4f8cdeb8624366fe924c4e8d70348d68512375b0723b7e84b8a40f49c69d760"
+    },
+    {
+      "path": "game/src/input.js",
+      "bytes": 2444,
+      "sha256": "d4855035aa8c4ff0220ff2a1ef7509b8fb61c45a4ca5a42008510843e5c2695c"
+    },
+    {
+      "path": "game/src/main.js",
+      "bytes": 15019,
+      "sha256": "3f1f5941c0b04fd1f5391a2800b0ec93bae386032267df7dde4e687934da7114"
+    },
+    {
+      "path": "game/src/player.js",
+      "bytes": 5882,
+      "sha256": "d3ae9fab0e4fb3df86892885e6d25a8193272565065cbe64561aa9a20a143894"
+    },
+    {
+      "path": "game/src/random.js",
+      "bytes": 821,
+      "sha256": "da6cbd08eef4e0dcaec5835944f28152939692bb4d9e4028d3f4753fbe4a5974"
+    },
+    {
+      "path": "game/src/shots.js",
+      "bytes": 1082,
+      "sha256": "2ef1ead41ded65679dc30e07a8f32cf48bec46a72bc0e45a5f1e007bfe6f4f52"
+    },
+    {
+      "path": "game/src/viewmodel.js",
+      "bytes": 1230,
+      "sha256": "f2e2c723f4d2ca10a6525db40741f5ec7725fd47de329a1894564ee2836d3eb7"
+    },
+    {
+      "path": "game/src/weapons.js",
+      "bytes": 2602,
+      "sha256": "ea20f8ee45b892723144e9353583ba5c9880425be1d90c06c8bc6f7584785519"
+    },
+    {
+      "path": "game/src/world.js",
+      "bytes": 6741,
+      "sha256": "6c45e8aabebd7dc1bc0a18999466bc9002118c6568227468cbfc384ae2339433"
+    },
+    {
+      "path": "game/vendor/three/LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "game/vendor/three/three.core.min.js",
+      "bytes": 1474799,
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "game/vendor/three/three.module.min.js",
+      "bytes": 658908,
+      "sha256": "ef510bae547ab3789d6ed543333a8bf42510a8c70743b766c4e19039b976c26b"
+    },
+    {
+      "path": "screenshots/1-start.jpg",
+      "bytes": 76501,
+      "sha256": "12145f6ee4e989bad6841c8dd8768b75716e522f76044014e75d5151c7c58090"
+    },
+    {
+      "path": "screenshots/2-play.jpg",
+      "bytes": 59759,
+      "sha256": "58cf7cbeb1b3cc918df0fab64c8a8092c12305e53bb45ef6b57bbb3eb89449e2"
+    },
+    {
+      "path": "screenshots/3-action.jpg",
+      "bytes": 62113,
+      "sha256": "23c39785ae48401a65be448f28a705b0020e259d5f61219c7d847e166b8ddbdd"
+    },
+    {
+      "path": "screenshots/4-end.jpg",
+      "bytes": 56454,
+      "sha256": "795d6993fcbbc9bcdb3e258dd424a0b0a79e55f80575cec530fab32abde0df04"
+    },
+    {
+      "path": "main.ts",
+      "bytes": 1787,
+      "sha256": "6aaef4abe914a3aeb2e5e7130c2a19c8c9252c4394857c3a373b5a666795fa1f"
+    },
+    {
+      "path": "vendor/makefun-game.ts",
+      "bytes": 56282,
+      "sha256": "dc67187521b24025ff952f8c231485a6eb92d6d71d29edd2a08154ffb4376129"
+    },
+    {
+      "path": "shots.json",
+      "bytes": 205,
+      "sha256": "ed2322cd6e992adac00a698a0327e355a968fe72138fd6c3839b78b3544a69fb"
+    }
+  ],
+  "browserValidation": "passed",
+  "screenshots": [
+    {
+      "path": "screenshots/1-start.jpg",
+      "width": 1280,
+      "height": 720,
+      "bytes": 76501,
+      "query": "?shot=start&seed=1",
+      "method": "Chromium WebGL render; deterministic in-game screenshot fixture"
+    },
+    {
+      "path": "screenshots/2-play.jpg",
+      "width": 1280,
+      "height": 720,
+      "bytes": 59759,
+      "query": "?shot=play&seed=1",
+      "method": "Chromium WebGL render; deterministic in-game screenshot fixture"
+    },
+    {
+      "path": "screenshots/3-action.jpg",
+      "width": 1280,
+      "height": 720,
+      "bytes": 62113,
+      "query": "?shot=action&seed=1",
+      "method": "Chromium WebGL render; deterministic in-game screenshot fixture"
+    },
+    {
+      "path": "screenshots/4-end.jpg",
+      "width": 1280,
+      "height": 720,
+      "bytes": 56454,
+      "query": "?shot=end&seed=1",
+      "method": "Chromium WebGL render; deterministic in-game screenshot fixture"
+    }
+  ],
+  "originalAgentRecords": {
+    "status": "missing",
+    "files": [],
+    "providerUsage": "not_available_to_this_script",
+    "officialBundle": "not_created",
+    "note": "Hashes are supplemental evidence only. Supply unchanged native session exports with real provider usage and run official kit checks; this report cannot prove prize eligibility."
+  },
+  "competitionSubmission": "not_performed"
+}

@@ -3,6 +3,12 @@
 本次审阅基线：79612745b9403210dde6b35092bb952c81a9739c。
 官方来源：https://make.fun/bounty/best-game-01 和 https://make.fun/api/competitions/best-game-01/requirements 。
 
+## 后续完善与验证
+
+已补充第一人称武器模型、连杀层级反馈、结算峰值倍率/生存时长/冲刺次数、灵敏度和减少动态效果选项。GitHub Actions 已通过真实Chromium交互检查和四张截图生成（运行44032587707，源码f7aad7a）。screenshots/现已更新；下文原先的本地浏览器限制是第一轮评估的历史记录。
+
+验证证据位于 docs/evidence/，生成命令及原始会话缺口见 BUILD-RECORDS.md。原始会话、真实provider usage和官方参赛bundle仍未补齐，不应把CI通过等同于奖金资格通过。
+
 ## 结论
 
 v1 已有双武器、三种敌人、完整波次与结算。继续增加普通敌人数量的收益有限；优先提升可辨认的机制、开局/重开可操作性、缩略截图的信息层级，以及付款资格的构建记录完整性。无法据源码推算名次或保证奖金。

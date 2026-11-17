@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "checks": [
+    "start/resume/restart buttons",
+    "dash and cooldown",
+    "pause freezes simulation",
+    "sensitivity/reduced motion controls",
+    "weapon switching",
+    "reload completion/progress",
+    "real enemy kill callbacks and chain scoring",
+    "death/restart",
+    "blur pauses",
+    "four real WebGL fixture renders",
+    "768x480 start control in viewport",
+    "no external requests",
+    "no page errors"
+  ],
+  "screenshots": [
+    {
+      "path": "screenshots/1-start.jpg",
+      "width": 1280,
+      "height": 720,
+      "bytes": 76501,
+      "query": "?shot=start&seed=1",
+      "method": "Chromium WebGL render; deterministic in-game screenshot fixture"
+    },
+    {
+      "path": "screenshots/2-play.jpg",
+      "width": 1280,
+      "height": 720,
+      "bytes": 59759,
+      "query": "?shot=play&seed=1",
+      "method": "Chromium WebGL render; deterministic in-game screenshot fixture"
+    },
+    {
+      "path": "screenshots/3-action.jpg",
+      "width": 1280,
+      "height": 720,
+      "bytes": 62113,
+      "query": "?shot=action&seed=1",
+      "method": "Chromium WebGL render; deterministic in-game screenshot fixture"
+    },
+    {
+      "path": "screenshots/4-end.jpg",
+      "width": 1280,
+      "height": 720,
+      "bytes": 56454,
+      "query": "?shot=end&seed=1",
+      "method": "Chromium WebGL render; deterministic in-game screenshot fixture"
+    }
+  ]
+}

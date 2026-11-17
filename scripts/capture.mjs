@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import { mkdirSync, writeFileSync, statSync } from 'node:fs';
 import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch({headless: true, ...(process.env.CHROMIUM_PATH ? {executablePath: process.env.CHROMIUM_PATH} : {}), args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
@@ -27,6 +28,9 @@ try {
   await page.click('#resume'); await page.waitForFunction(()=>__game.game.state==='playing');
   await page.keyboard.press('2');assert.equal(await page.evaluate(()=>__game.player.state.currentWeapon),'shotgun');
   await page.keyboard.press('1');
+  const ammoBefore=await page.evaluate(()=>__game.player.state.weapons.rifle.mag);
+  await page.mouse.move(640,360);await page.mouse.down();await page.waitForTimeout(250);await page.mouse.up();
+  assert.ok(await page.evaluate(()=>__game.player.state.weapons.rifle.mag)<ammoBefore);
   await page.evaluate(()=>__game.player.state.weapons.rifle.mag=1);
   await page.keyboard.press('r'); await page.waitForTimeout(150);
   assert.match(await page.locator('#ammo-mag').innerText(),/%/);
@@ -44,6 +48,7 @@ try {
   assert.equal(chain.count,4);assert.equal(chain.score,500);
   await page.evaluate(()=>{__game.player.state.alive=false;__game.player.state.hp=0;});
   await page.waitForFunction(()=>__game.game.state==='over');
+  assert.ok(await page.evaluate(()=>Number(localStorage.getItem('neon-void-best')))>=500);
   await page.click('#redeploy');await page.waitForFunction(()=>__game.game.state==='playing');
   assert.equal(await page.evaluate(()=>__game.game.score),0);
   await page.evaluate(()=>window.dispatchEvent(new Event('blur')));
@@ -52,6 +57,7 @@ try {
   // Assertions below are also reported by CI; preserve diagnostic screenshot on failure.
   await page.screenshot({path:'artifacts/failure.png'});throw e;
 } finally { /* screenshots continue below after the interaction checks */ }
+await page.evaluate(()=>localStorage.clear());
 const shots=[['1-start','start'],['2-play','play'],['3-action','action'],['4-end','end']];
 const manifest=[];
 for(const [file,shot] of shots){
@@ -67,5 +73,5 @@ await page.goto(origin+'/?shot=start&seed=1');await page.waitForFunction(()=>win
 const button=await page.locator('#deploy').boundingBox();assert.ok(button && button.y>=0 && button.y+button.height<=480);
 await page.screenshot({path:'artifacts/title-768x480.jpg',type:'jpeg',quality:86});
 assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
-writeFileSync('artifacts/browser-validation.json',JSON.stringify({status:'passed',checks:['start/resume/restart buttons','dash and cooldown','pause freezes simulation','sensitivity/reduced motion controls','weapon switching','reload completion/progress','real enemy kill callbacks and chain scoring','death/restart','blur pauses','four real WebGL fixture renders','768x480 start control in viewport','no external requests','no page errors'],screenshots:manifest},null,2));
+writeFileSync('artifacts/browser-validation.json',JSON.stringify({status:'passed',commit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),checks:['start/resume/restart buttons','dash and cooldown','pause freezes simulation','sensitivity/reduced motion controls','weapon switching','mouse fire consumes ammunition','reload completion/progress','real enemy kill callbacks and chain scoring','death/restart','best score persisted','blur pauses','four real WebGL fixture renders','768x480 start control in viewport','no external requests','no page errors'],screenshots:manifest},null,2));
 await browser.close();console.log('Browser gameplay checks and four screenshots passed.');
