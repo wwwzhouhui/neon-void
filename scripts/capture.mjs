@@ -21,7 +21,8 @@ try {
   const frozen=await page.evaluate(()=>__game.game.now);
   await page.waitForTimeout(350);
   assert.equal(await page.evaluate(()=>__game.game.now),frozen);
-  await page.locator('#sensitivity').fill('1.4');
+  await page.locator('#sensitivity').evaluate(el => { el.value='1.4'; el.dispatchEvent(new Event('input',{bubbles:true})); });
+  assert.equal(await page.locator('#sensitivity').inputValue(),'1.4');
   await page.locator('#reduced-motion').check();
   await page.click('#resume'); await page.waitForFunction(()=>__game.game.state==='playing');
   await page.keyboard.press('2');assert.equal(await page.evaluate(()=>__game.player.state.currentWeapon),'shotgun');
