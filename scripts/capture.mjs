@@ -1,3 +1,5 @@
+// Judge evidence: four real game renders cover start, HUD, combat and restart.
+// Fixture poses are not recorded gameplay scores; see docs/JUDGING.md.
 import { createRequire } from 'node:module';
 import { mkdirSync, writeFileSync, statSync } from 'node:fs';
 import assert from 'node:assert/strict';

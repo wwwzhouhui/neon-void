@@ -38,3 +38,9 @@ See [competition review](docs/COMPETITION-REVIEW.md) for changes, validation lim
 The [GitHub workflow](.github/workflows/validate.yml) runs Chromium gameplay checks, renders four screenshots and uploads a `neon-void-evidence` artifact with the dossier and SHA-256 manifest. Read [build records](docs/BUILD-RECORDS.md) for local commands and the original agent records still required by the competition.
 
 The latest polish adds a procedural first-person weapon, chain-tier feedback, run statistics, aim sensitivity and reduced-motion controls in the pause menu.
+
+## How the competition judges this game / 裁判如何评审
+
+The official brief says the AI judge compares games in pairs using **screenshots and an outline of their source**. NEON VOID supplies four real game renders covering start, gameplay, combat feedback and results/restart. The unchanged official kit generates the dossier from the playable source and screenshots; project documentation is not a substitute for that evidence.
+
+裁判比较截图与源码提纲。四张截图、核心模块和实际功能的对应关系，以及 dossier 的生成流程，见 [评审方式与证据映射](docs/JUDGING.md)。

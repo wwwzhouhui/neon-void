@@ -4,6 +4,12 @@
 // writes /output/dossier.json, the summary the judge reads, with the
 // vendored make.fun library.
 //
+// Official judging compares screenshots and a source outline in pairs.
+// buildDossier packages actual screenshots and source text; the platform
+// derives its judge view. Keep the kit unchanged: do not hand-edit the dossier.
+// See docs/JUDGING.md for screenshot roles and the source-to-feature mapping.
+// README/docs are developer guidance, not assumed judge-view inputs.
+//
 // Serve the game locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
