@@ -29,6 +29,8 @@ export function createInput(canvas) {
   window.addEventListener('blur', () => {
     keys.clear();
     firing = false;
+    lookDX = 0; lookDY = 0;
+    fireActions('FocusLost', null);
   });
 
   document.addEventListener('mousemove', (event) => {
@@ -47,7 +49,10 @@ export function createInput(canvas) {
     if (event.button === 0) firing = false;
   });
 
+  function clear() { keys.clear(); firing = false; lookDX = 0; lookDY = 0; }
+
   return {
+    clear,
     keys,
     onAction,
     requestLock() {

@@ -27,9 +27,15 @@ export function createPlayer() {
     reloadWeapon: null,
     fireCooldownUntil: 0,
     lastDamageAt: -10,
+    dashUntil: 0,
+    dashReadyAt: 0,
+    dashX: 0,
+    dashZ: 0,
   };
 
   function reset() {
+    state.dashUntil = 0;
+    state.dashReadyAt = 0;
     state.position.set(0, 0, 8);
     state.velocity.set(0, 0, 0);
     state.yaw = 0;
@@ -81,6 +87,10 @@ export function createPlayer() {
     }
     state.velocity.y += ARENA.gravity * dt;
 
+    if (now < state.dashUntil) {
+      state.velocity.x = state.dashX * 23;
+      state.velocity.z = state.dashZ * 23;
+    }
     const next = {
       x: state.position.x + state.velocity.x * dt,
       z: state.position.z + state.velocity.z * dt,
@@ -157,6 +167,15 @@ export function createPlayer() {
     heal,
     eyePosition,
     forwardVector,
+    dash(now) {
+      if (!state.alive || now < state.dashReadyAt) return false;
+      const length = Math.hypot(state.velocity.x, state.velocity.z);
+      state.dashX = length > 0.5 ? state.velocity.x / length : -Math.sin(state.yaw);
+      state.dashZ = length > 0.5 ? state.velocity.z / length : -Math.cos(state.yaw);
+      state.dashUntil = now + 0.18;
+      state.dashReadyAt = now + 3;
+      return true;
+    },
     switchWeapon(key) {
       if (!WEAPONS[key] || key === state.currentWeapon) return false;
       state.currentWeapon = key;

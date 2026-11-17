@@ -57,13 +57,20 @@ const game = {
   kills: 0,
   restTimer: 0,
   now: 0,
+  chain: 0,
+  chainUntil: 0,
+  peakMultiplier: 1,
   prevFiring: false,
   prevReloading: false,
 };
 
 const enemyManager = createEnemyManager(scene, world, rng, {
   onKill(enemy) {
-    game.score += enemy.def.score;
+    game.chain = game.now <= game.chainUntil ? game.chain + 1 : 1;
+    game.chainUntil = game.now + 4;
+    const multiplier = Math.min(4, 1 + Math.floor((game.chain - 1) / 3));
+    game.peakMultiplier = Math.max(game.peakMultiplier, multiplier);
+    game.score += enemy.def.score * multiplier;
     game.kills += 1;
     audio.kill();
     hud.hitmarker();
@@ -90,8 +97,12 @@ function hurtPlayer(amount, now = game.now) {
 }
 
 function playingState() {
-  const ammo = weaponHudState(player);
+  const ammo = weaponHudState(player, game.now);
   return {
+    dash: Math.max(0, player.state.dashReadyAt - game.now),
+    multiplier: game.chain > 0 && game.now <= game.chainUntil ? Math.min(4, 1 + Math.floor((game.chain - 1) / 3)) : 1,
+    chainTime: Math.max(0, game.chainUntil - game.now),
+    rest: game.restTimer,
     hp: player.state.hp,
     maxHp: player.state.maxHp,
     ammo,
@@ -111,7 +122,8 @@ function poseCamera() {
 }
 
 function renderFrame() {
-  poseCamera();
+  if (game.state === 'title' || game.state === 'over') api.poseTitleCamera();
+  else poseCamera();
   renderer.render(scene, camera);
 }
 
@@ -129,6 +141,14 @@ function startGame() {
   player.reset();
   enemyManager.clearAll();
   fx.clear();
+  input.clear();
+  game.now = 0;
+  game.chain = 0;
+  game.chainUntil = 0;
+  game.peakMultiplier = 1;
+  game.prevFiring = false;
+  game.prevReloading = false;
+  game.overClickArmed = false;
   game.score = 0;
   game.kills = 0;
   game.wave = 0;
@@ -154,6 +174,7 @@ function endGame() {
 function pauseGame() {
   if (game.state !== 'playing') return;
   game.state = 'paused';
+  input.clear();
   input.exitLock();
   hud.showPaused();
 }
@@ -262,13 +283,15 @@ const api = {
 };
 
 function update(dt) {
-  game.now += dt;
+  if (game.state === 'playing') game.now += dt;
   const now = game.now;
 
   if (game.state === 'playing') {
     const look = input.consumeLook();
     player.look(look.dx, look.dy);
     player.update(dt, input, world, now);
+    poseCamera();
+    camera.updateMatrixWorld(true);
 
     if (player.state.reloading && !game.prevReloading) audio.reloadStart();
     if (!player.state.reloading && game.prevReloading) audio.reloadDone();
@@ -289,6 +312,7 @@ function update(dt) {
     }
 
     enemyManager.update(dt, player.state.position, player.state, now);
+    if (game.state !== 'playing') return;
     checkWaveCleared();
     if (game.restTimer > 0) {
       game.restTimer -= dt;
@@ -314,6 +338,11 @@ input.onAction('KeyR', () => {
   if (game.state === 'playing') player.startReload(game.now);
   else if (game.state === 'over') { audio.click(); startGame(); input.requestLock(); }
 });
+input.onAction('FocusLost', pauseGame);
+document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
+input.onAction('KeyE', () => {
+  if (game.state === 'playing' && player.dash(game.now)) audio.click();
+});
 input.onAction('KeyP', () => {
   if (game.state === 'playing') pauseGame();
   else if (game.state === 'paused') resumeGame();
@@ -331,6 +360,9 @@ input.onAction('Digit1', () => {
 input.onAction('Digit2', () => {
   if (game.state === 'playing' && player.switchWeapon('shotgun')) audio.click();
 });
+document.getElementById('deploy').addEventListener('click', () => { audio.unlock(); startGame(); input.requestLock(); });
+document.getElementById('resume').addEventListener('click', resumeGame);
+document.getElementById('redeploy').addEventListener('click', () => { audio.unlock(); startGame(); input.requestLock(); });
 canvas.addEventListener('click', () => {
   audio.unlock();
   if (game.state === 'title') {
@@ -367,6 +399,10 @@ window.__game = {
     wave: game.wave,
     score: game.score,
     kills: game.kills,
+    dash: Math.max(0, player.state.dashReadyAt - game.now),
+    multiplier: game.chain > 0 && game.now <= game.chainUntil ? Math.min(4, 1 + Math.floor((game.chain - 1) / 3)) : 1,
+    chainTime: Math.max(0, game.chainUntil - game.now),
+    rest: game.restTimer,
     hp: player.state.hp,
     alive: player.state.alive,
     enemies: enemyManager.aliveCount,
@@ -395,7 +431,9 @@ if (shot) {
       steps++;
     }
     if (steps === 5) accumulator = 0;
+    if (game.state === 'title') api.poseTitleCamera();
     renderer.render(scene, camera);
   }
+  api.spawnTitleDrones();
   requestAnimationFrame(frame);
 }

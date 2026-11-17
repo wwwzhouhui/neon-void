@@ -114,6 +114,24 @@
   .screen .dim { margin-top: 12px; font-size: 16px; letter-spacing: 3px; color: #9fd8ff; }
   .stats { margin-top: 30px; font-family: ui-monospace, Consolas, monospace; font-size: 22px; line-height: 2.1; letter-spacing: 3px; }
   .stats .new-best { color: var(--amber); font-weight: 700; }
+  button { font: inherit; color: white; background: #14223b; border: 1px solid var(--cyan); padding: 13px 28px; cursor: pointer; letter-spacing: 3px; margin-top: 20px; box-shadow: 0 0 24px #00f0ff33; }
+  button:hover, button:focus-visible { background: #234562; outline: 2px solid white; }
+  #objective { position: absolute; top: 94px; left: 24px; font: 12px monospace; color: #cfe8ff; }
+  #chain-block { position: absolute; bottom: 112px; left: 24px; width: 250px; font: bold 17px monospace; color: var(--amber); }
+  #chain-track { height: 4px; background: #ffffff22; margin-top: 8px; }
+  #chain-fill { height: 100%; background: var(--amber); }
+  #dash-text { margin-top: 9px; font: 13px monospace; color: var(--cyan); }
+  #ammo-mag { font-size: 32px; }
+  .feature { margin-top: 18px; color: var(--amber); letter-spacing: 3px; font-weight: bold; }
+  .start-hint { animation: none; font-size: 14px; margin-top: 16px; }
+  @media (max-height: 540px), (max-width: 850px) {
+    .game-title { font-size: 58px; letter-spacing: 7px; }
+    .controls { font-size: 11px; margin-top: 18px; letter-spacing: 0; }
+    .game-subtitle, .feature { font-size: 12px; letter-spacing: 2px; }
+    .stats { font-size: 18px; margin-top: 12px; }
+    #wave-banner { font-size: 34px; letter-spacing: 4px; }
+    #wave-banner span { font-size: 13px; letter-spacing: 1px; }
+  }
 </style>
 <script type="importmap">
 {
@@ -137,6 +155,8 @@
       <div id="enemies-text">HOSTILES 0</div>
     </div>
   </div>
+  <div id="objective"></div>
+  <div id="chain-block"><div id="chain-text">CHAIN ×1</div><div id="chain-track"><div id="chain-fill"></div></div><div id="dash-text">[E] VOID DASH READY</div></div>
   <div id="crosshair"></div>
   <div id="hitmarker" class="hidden"></div>
   <div id="damage-vignette" class="hidden"></div>
@@ -159,18 +179,21 @@
 <div id="screen-title" class="screen">
   <div class="game-title">NEON <span class="void">VOID</span></div>
   <div class="game-subtitle">ARENA WAVE SURVIVAL · HOLD THE LINE</div>
+  <div class="feature">VOID DASH · CHAIN KILLS · MULTIPLY YOUR SCORE</div>
   <div class="controls">
     <b>MOUSE</b> LOOK &nbsp;·&nbsp; <b>CLICK</b> FIRE &nbsp;·&nbsp; <b>R</b> RELOAD<br>
     <b>1 / 2</b> PULSE RIFLE / SCATTERGUN &nbsp;·&nbsp; <b>WASD</b> MOVE &nbsp;·&nbsp; <b>SHIFT</b> SPRINT &nbsp;·&nbsp; <b>SPACE</b> JUMP<br>
-    <b>P</b> PAUSE &nbsp;·&nbsp; <b>M</b> MUTE &nbsp;·&nbsp; SURVIVE EVERY WAVE, TOP THE SCORE
+    <b>E</b> DASH &nbsp;·&nbsp; <b>P</b> PAUSE &nbsp;·&nbsp; <b>M</b> MUTE &nbsp;·&nbsp; SURVIVE EVERY WAVE, TOP THE SCORE
   </div>
-  <div class="start-hint">— CLICK OR PRESS ENTER TO DEPLOY —</div>
+  <button id="deploy" type="button">DEPLOY →</button>
+  <div class="start-hint">ENTER TO DEPLOY · CHAIN 3 MORE KILLS IN 4s TO RAISE MULTIPLIER</div>
   <div id="best-title">SURVIVE THE VOID</div>
 </div>
 
 <div id="screen-pause" class="screen hidden">
   <h2>PAUSED</h2>
-  <div class="dim">CLICK OR PRESS P TO RESUME</div>
+  <div class="dim">PRESS P TO RESUME</div>
+  <button id="resume" type="button">RESUME →</button>
 </div>
 
 <div id="screen-over" class="screen hidden">
@@ -182,7 +205,8 @@
     <div id="over-score">SCORE 0</div>
     <div id="over-best" class="new-best">BEST 0</div>
   </div>
-  <div class="start-hint">— PRESS R OR ENTER TO REDEPLOY —</div>
+  <button id="redeploy" type="button">REDEPLOY ↻</button>
+  <div class="start-hint">PRESS R OR ENTER TO REDEPLOY</div>
 </div>
 
 <script type="module" src="./src/main.js"></script>

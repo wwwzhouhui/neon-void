@@ -62,15 +62,20 @@ export function createHud() {
   }
 
   function updatePlaying(state) {
+    el('dash-text').textContent = state.dash > 0 ? `DASH ${state.dash.toFixed(1)}s` : '[E] VOID DASH READY';
+    el('chain-text').textContent = `CHAIN ×${state.multiplier} · ${state.chainTime.toFixed(1)}s`;
+    el('chain-fill').style.width = `${Math.min(100, state.chainTime / 4 * 100)}%`;
+    el('objective').textContent = state.rest > 0 ? `NEXT WAVE IN ${Math.ceil(state.rest)} · +25 HP RESTORED` : 'CLEAR THE SECTOR · KILLS WITHIN 4s BUILD ×4 SCORE';
     const hpPct = Math.max(0, Math.round((state.hp / state.maxHp) * 100));
     if (nodes.healthFill) {
       nodes.healthFill.style.width = `${hpPct}%`;
       nodes.healthFill.style.background = hpPct > 50 ? '#00f0ff' : hpPct > 25 ? '#ffb300' : '#ff2d78';
     }
     if (nodes.healthText) nodes.healthText.textContent = `${Math.ceil(state.hp)}`;
-    if (nodes.ammoMag) nodes.ammoMag.textContent = state.ammo.reloading ? '--' : `${state.ammo.mag}`;
+    if (nodes.ammoMag) nodes.ammoMag.textContent = state.ammo.reloading ? `${Math.round(state.ammo.reloadProgress * 100)}%` : `${state.ammo.mag} / ${state.ammo.magSize}`;
     if (nodes.ammoWeapon) nodes.ammoWeapon.textContent = state.ammo.name;
-    if (nodes.reloadHint) nodes.reloadHint.classList.toggle('hidden', !state.ammo.reloading);
+    if (nodes.reloadHint) nodes.reloadHint.classList.toggle('hidden', !state.ammo.reloading && state.ammo.mag > 0);
+    nodes.reloadHint.textContent = state.ammo.reloading ? 'RELOADING…' : '[R] RELOAD';
     if (nodes.waveText) nodes.waveText.textContent = `WAVE ${state.wave}`;
     if (nodes.scoreText) nodes.scoreText.textContent = `SCORE ${state.score}`;
     if (nodes.killsText) nodes.killsText.textContent = `KILLS ${state.kills}`;

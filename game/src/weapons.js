@@ -62,7 +62,7 @@ export function tryFire(player, camera, enemyManager, fx, audio, now) {
   return true;
 }
 
-export function weaponHudState(player) {
+export function weaponHudState(player, now = 0) {
   const p = player.state;
   const def = WEAPONS[p.currentWeapon];
   return {
@@ -70,7 +70,7 @@ export function weaponHudState(player) {
     mag: p.weapons[p.currentWeapon].mag,
     magSize: def.magSize,
     reloading: p.reloading,
-    reloadProgress: p.reloading ? clamp(1 - (p.reloadEndsAt - performance.now() / 1000) / def.reloadSeconds, 0, 1) : 0,
+    reloadProgress: p.reloading ? clamp(1 - (p.reloadEndsAt - now) / def.reloadSeconds, 0, 1) : 0,
     weaponKey: p.currentWeapon,
   };
 }
