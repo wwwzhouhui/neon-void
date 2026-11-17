@@ -1,0 +1,35 @@
+name: Gameplay and screenshot evidence
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --experimental-loader ./tests/three-loader.mjs tests/gameplay.mjs
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Test and render
+        run: |
+          node serve.ts > /tmp/neon-server.log 2>&1 &
+          for attempt in $(seq 1 20); do curl -fsS http://127.0.0.1:8080/ > /dev/null && break; sleep 1; done
+          node scripts/capture.mjs
+      - run: MAKEFUN_OUTPUT_DIR=out node main.ts
+      - run: node scripts/evidence.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: neon-void-evidence
+          path: |
+            screenshots/
+            artifacts/
+            out/dossier.json

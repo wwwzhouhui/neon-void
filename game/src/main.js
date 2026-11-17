@@ -13,6 +13,8 @@ import { tryFire, weaponHudState } from './weapons.js';
 import { createEnemyManager } from './enemies.js';
 import { createEffects } from './fx.js';
 import { createHud } from './hud.js';
+import { chainMultiplier, registerKill, resetChain } from './chain.js';
+import { createWeaponView } from './viewmodel.js';
 import { stageShot } from './shots.js';
 
 const STEP = 1 / 60;
@@ -37,6 +39,8 @@ scene.fog = new THREE.FogExp2(PALETTE.fog, PALETTE.fogDensity);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 220);
 camera.rotation.order = 'YXZ';
+scene.add(camera);
+const weaponView = createWeaponView(camera);
 
 const world = buildArena(scene, rng);
 const fx = createEffects(scene);
@@ -57,20 +61,18 @@ const game = {
   kills: 0,
   restTimer: 0,
   now: 0,
-  chain: 0,
-  chainUntil: 0,
-  peakMultiplier: 1,
+  chain: { count: 0, until: 0, peak: 1 },
+  dashUses: 0,
   prevFiring: false,
   prevReloading: false,
 };
 
 const enemyManager = createEnemyManager(scene, world, rng, {
   onKill(enemy) {
-    game.chain = game.now <= game.chainUntil ? game.chain + 1 : 1;
-    game.chainUntil = game.now + 4;
-    const multiplier = Math.min(4, 1 + Math.floor((game.chain - 1) / 3));
-    game.peakMultiplier = Math.max(game.peakMultiplier, multiplier);
-    game.score += enemy.def.score * multiplier;
+    const previous = chainMultiplier(game.chain, game.now);
+    game.score += registerKill(game.chain, game.now, enemy.def.score);
+    const multiplier = chainMultiplier(game.chain, game.now);
+    if (multiplier > previous) hud.banner(`CHAIN ×${multiplier}`, 'KEEP MOVING · KEEP THE SIGNAL ALIVE');
     game.kills += 1;
     audio.kill();
     hud.hitmarker();
@@ -100,8 +102,8 @@ function playingState() {
   const ammo = weaponHudState(player, game.now);
   return {
     dash: Math.max(0, player.state.dashReadyAt - game.now),
-    multiplier: game.chain > 0 && game.now <= game.chainUntil ? Math.min(4, 1 + Math.floor((game.chain - 1) / 3)) : 1,
-    chainTime: Math.max(0, game.chainUntil - game.now),
+    multiplier: chainMultiplier(game.chain, game.now),
+    chainTime: Math.max(0, game.chain.until - game.now),
     rest: game.restTimer,
     hp: player.state.hp,
     maxHp: player.state.maxHp,
@@ -121,7 +123,15 @@ function poseCamera() {
   camera.rotation.z = 0;
 }
 
+function updatePresentation() {
+  const reduced = document.getElementById('reduced-motion').checked;
+  weaponView.update(player.state, game.now, game.state === 'playing', reduced);
+  const fov = !reduced && game.now < player.state.dashUntil ? 84 : 75;
+  if (camera.fov !== fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
+}
+
 function renderFrame() {
+  updatePresentation();
   if (game.state === 'title' || game.state === 'over') api.poseTitleCamera();
   else poseCamera();
   renderer.render(scene, camera);
@@ -143,9 +153,8 @@ function startGame() {
   fx.clear();
   input.clear();
   game.now = 0;
-  game.chain = 0;
-  game.chainUntil = 0;
-  game.peakMultiplier = 1;
+  resetChain(game.chain);
+  game.dashUses = 0;
   game.prevFiring = false;
   game.prevReloading = false;
   game.overClickArmed = false;
@@ -155,12 +164,15 @@ function startGame() {
   game.restTimer = 0;
   game.state = 'playing';
   hud.showPlaying();
+  hud.updatePlaying(playingState());
   hud.setMuted(audio.isMuted());
   startWave(1);
 }
 
 function endGame() {
+  if (game.state === 'over') return;
   game.state = 'over';
+  input.clear();
   input.exitLock();
   audio.gameOver();
   const isNewBest = game.score > best;
@@ -168,11 +180,12 @@ function endGame() {
     best = game.score;
     try { window.localStorage.setItem(BEST_KEY, String(best)); } catch (e) { /* ignore */ }
   }
-  hud.showGameOver({ wave: game.wave, kills: game.kills, score: game.score, best, isNewBest });
+  hud.showGameOver({ wave: game.wave, kills: game.kills, score: game.score, best, isNewBest, peak: game.chain.peak, seconds: game.now, dashes: game.dashUses });
 }
 
 function pauseGame() {
   if (game.state !== 'playing') return;
+  game.prevFiring = false;
   game.state = 'paused';
   input.clear();
   input.exitLock();
@@ -225,6 +238,7 @@ const api = {
     game.score = wave === 2 ? 650 : 1450;
     game.kills = wave === 2 ? 7 : 16;
     game.wave = wave;
+    game.chain = { count: wave === 3 ? 7 : 2, until: 3.2, peak: wave === 3 ? 3 : 1 };
     game.state = 'playing';
     hud.showPlaying();
     const comp = waveComposition(wave);
@@ -275,7 +289,7 @@ const api = {
     game.wave = 4;
     game.score = 2350;
     game.kills = 23;
-    hud.showGameOver({ wave: 4, kills: 23, score: 2350, best: Math.max(best, 2350), isNewBest: true });
+    hud.showGameOver({ wave: 4, kills: 23, score: 2350, best: Math.max(best, 2350), isNewBest: true, peak: 3, seconds: 143, dashes: 9 });
     camera.position.set(0, 5.5, 17);
     camera.lookAt(0, 1.6, -8);
     camera.rotation.z = 0;
@@ -288,7 +302,8 @@ function update(dt) {
 
   if (game.state === 'playing') {
     const look = input.consumeLook();
-    player.look(look.dx, look.dy);
+    const sensitivity = Number(document.getElementById('sensitivity').value);
+    player.look(look.dx * sensitivity, look.dy * sensitivity);
     player.update(dt, input, world, now);
     poseCamera();
     camera.updateMatrixWorld(true);
@@ -341,7 +356,7 @@ input.onAction('KeyR', () => {
 input.onAction('FocusLost', pauseGame);
 document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
 input.onAction('KeyE', () => {
-  if (game.state === 'playing' && player.dash(game.now)) audio.click();
+  if (game.state === 'playing' && player.dash(game.now)) { game.dashUses++; audio.click(); }
 });
 input.onAction('KeyP', () => {
   if (game.state === 'playing') pauseGame();
@@ -400,8 +415,8 @@ window.__game = {
     score: game.score,
     kills: game.kills,
     dash: Math.max(0, player.state.dashReadyAt - game.now),
-    multiplier: game.chain > 0 && game.now <= game.chainUntil ? Math.min(4, 1 + Math.floor((game.chain - 1) / 3)) : 1,
-    chainTime: Math.max(0, game.chainUntil - game.now),
+    multiplier: chainMultiplier(game.chain, game.now),
+    chainTime: Math.max(0, game.chain.until - game.now),
     rest: game.restTimer,
     hp: player.state.hp,
     alive: player.state.alive,
@@ -413,6 +428,7 @@ window.__game = {
 // ---- boot ----
 hud.showTitle(best);
 hud.setMuted(false);
+document.getElementById('reduced-motion').checked = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 if (shot) {
   stageShot(shot, { api });
@@ -432,6 +448,7 @@ if (shot) {
     }
     if (steps === 5) accumulator = 0;
     if (game.state === 'title') api.poseTitleCamera();
+    updatePresentation();
     renderer.render(scene, camera);
   }
   api.spawnTitleDrones();

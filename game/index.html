@@ -116,14 +116,19 @@
   .stats .new-best { color: var(--amber); font-weight: 700; }
   button { font: inherit; color: white; background: #14223b; border: 1px solid var(--cyan); padding: 13px 28px; cursor: pointer; letter-spacing: 3px; margin-top: 20px; box-shadow: 0 0 24px #00f0ff33; }
   button:hover, button:focus-visible { background: #234562; outline: 2px solid white; }
-  #objective { position: absolute; top: 94px; left: 24px; font: 12px monospace; color: #cfe8ff; }
+  #top-bar .left, #top-bar .right { background: #050512b8; padding: 10px 14px; border-left: 2px solid var(--cyan); }
+  #objective { position: absolute; top: 108px; left: 24px; font: 12px monospace; color: #cfe8ff; }
   #chain-block { position: absolute; bottom: 112px; left: 24px; width: 250px; font: bold 17px monospace; color: var(--amber); }
   #chain-track { height: 4px; background: #ffffff22; margin-top: 8px; }
   #chain-fill { height: 100%; background: var(--amber); }
   #dash-text { margin-top: 9px; font: 13px monospace; color: var(--cyan); }
   #ammo-mag { font-size: 32px; }
+  .settings { margin-top: 18px; font-size: 13px; display: flex; gap: 24px; align-items: center; }
+  input[type="range"] { width: 110px; accent-color: var(--cyan); }
+  #over-run { color: var(--cyan); font-size: 16px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
   .feature { margin-top: 18px; color: var(--amber); letter-spacing: 3px; font-weight: bold; }
-  .start-hint { animation: none; font-size: 14px; margin-top: 16px; }
+  .start-hint { animation: none; font-size: 13px; letter-spacing: 2px; margin-top: 16px; max-width: 90vw; }
   @media (max-height: 540px), (max-width: 850px) {
     .game-title { font-size: 58px; letter-spacing: 7px; }
     .controls { font-size: 11px; margin-top: 18px; letter-spacing: 0; }
@@ -178,7 +183,7 @@
 
 <div id="screen-title" class="screen">
   <div class="game-title">NEON <span class="void">VOID</span></div>
-  <div class="game-subtitle">ARENA WAVE SURVIVAL · HOLD THE LINE</div>
+  <div class="game-subtitle">DASH INTO DANGER. CHAIN YOUR WAY OUT.</div>
   <div class="feature">VOID DASH · CHAIN KILLS · MULTIPLY YOUR SCORE</div>
   <div class="controls">
     <b>MOUSE</b> LOOK &nbsp;·&nbsp; <b>CLICK</b> FIRE &nbsp;·&nbsp; <b>R</b> RELOAD<br>
@@ -193,6 +198,7 @@
 <div id="screen-pause" class="screen hidden">
   <h2>PAUSED</h2>
   <div class="dim">PRESS P TO RESUME</div>
+  <div class="settings"><label>AIM SENSITIVITY <input id="sensitivity" type="range" min="0.4" max="2" value="1" step="0.1"></label><label><input id="reduced-motion" type="checkbox"> REDUCED MOTION</label></div>
   <button id="resume" type="button">RESUME →</button>
 </div>
 
@@ -203,6 +209,7 @@
     <div id="over-wave">WAVE REACHED 1</div>
     <div id="over-kills">ELIMINATIONS 0</div>
     <div id="over-score">SCORE 0</div>
+    <div id="over-run"></div>
     <div id="over-best" class="new-best">BEST 0</div>
   </div>
   <button id="redeploy" type="button">REDEPLOY ↻</button>

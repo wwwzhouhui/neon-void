@@ -32,3 +32,9 @@ MAKEFUN_OUTPUT_DIR=out node main.ts
 ```
 
 See [competition review](docs/COMPETITION-REVIEW.md) for changes, validation limits and remaining submission steps. The screenshots currently show v1; refresh them from real browser renders before entering this revision.
+
+## Reproducible screenshots and build evidence
+
+The [GitHub workflow](.github/workflows/validate.yml) runs Chromium gameplay checks, renders four screenshots and uploads a `neon-void-evidence` artifact with the dossier and SHA-256 manifest. Read [build records](docs/BUILD-RECORDS.md) for local commands and the original agent records still required by the competition.
+
+The latest polish adds a procedural first-person weapon, chain-tier feedback, run statistics, aim sensitivity and reduced-motion controls in the pause menu.

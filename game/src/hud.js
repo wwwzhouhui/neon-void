@@ -33,6 +33,12 @@ export function createHud() {
   let hitTimer = null;
 
   function showOnly(screen) {
+    if (screen !== 'none') {
+      if (bannerTimer) clearTimeout(bannerTimer);
+      nodes.banner.classList.add('hidden');
+      nodes.hitmarker.classList.add('hidden');
+      nodes.vignette.classList.add('hidden');
+    }
     for (const key of ['titleScreen', 'pauseScreen', 'overScreen']) {
       if (nodes[key]) nodes[key].classList.toggle('hidden', key !== screen);
     }
@@ -55,6 +61,7 @@ export function createHud() {
 
   function showGameOver(stats) {
     showOnly('overScreen');
+    el('over-run').textContent = `PEAK ×${stats.peak ?? 1} · ${Math.floor(stats.seconds ?? 0)}s SURVIVED · ${stats.dashes ?? 0} DASHES`;
     if (nodes.overWave) nodes.overWave.textContent = `WAVE REACHED ${stats.wave}`;
     if (nodes.overKills) nodes.overKills.textContent = `ELIMINATIONS ${stats.kills}`;
     if (nodes.overScore) nodes.overScore.textContent = `SCORE ${stats.score}`;

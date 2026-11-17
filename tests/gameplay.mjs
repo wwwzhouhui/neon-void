@@ -31,3 +31,15 @@ p.dash(0);
 for(let i=1;i<=12;i++) p.update(1/60,idle,world,i/60);
 assert.ok(p.state.position.z >= -0.56, 'dash must not cross cover');
 console.log('PASS: dash respects arena cover');
+
+const {registerKill,chainMultiplier,resetChain}=await import('../game/src/chain.js');
+const chain={};resetChain(chain);
+assert.equal(chainMultiplier(chain,0),1);
+let score=0;
+for(let i=0;i<10;i++) score+=registerKill(chain,i,100);
+assert.equal(chainMultiplier(chain,9),4);assert.equal(chain.peak,4);
+assert.equal(score,2200);
+assert.equal(chainMultiplier(chain,13.01),1);
+assert.equal(registerKill(chain,14,100),100);assert.equal(chain.count,1);
+resetChain(chain);assert.equal(chain.peak,1);
+console.log('PASS: chain window, tier thresholds, score totals, expiry and reset');
